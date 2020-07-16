@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="16dp"
+   >
+
+    <TextView
+        fontPath="fonts/Lato-Bold.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:text="iMessenger Registration"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="28sp" />
+
+    <TextView
+        fontPath="fonts/Lato-Hairline.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="powered by INFO121"
+        android:textColor="@color/base"
+        android:textSize="10dp" />
+
+    <TextView
+        fontPath="fonts/Lato-Regular.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="Register your mobile so that you can start to receive the broadcast message from your operation department."
+        android:textColor="@color/monsoon" />
+
+    <LinearLayout
+        android:id="@+id/login_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounded_layout"
+        android:orientation="vertical"
+        android:paddingLeft="32dp"
+        android:paddingTop="32dp"
+        android:paddingRight="32dp"
+        android:paddingBottom="32dp">
+
+        <EditText
+            android:id="@+id/user_name"
+            style="@style/edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Name"
+            android:paddingStart="16dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/edit_text_color" />
+
+        <EditText
+            android:id="@+id/phone_no"
+            style="@style/edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Mobile"
+            android:paddingStart="16dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/edit_text_color" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:layout_marginTop="32dp"
+        android:orientation="horizontal">
+
+        <CheckBox android:id="@+id/accept"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/monsoon" />
+
+        <TextView
+            fontPath="fonts/Lato-Regular.ttf"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="8dp"
+            android:gravity="top"
+            android:layout_height="40dp"
+            android:text="I accept the terms and conditions for using this mobile app." />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/signin"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounded_button_disable"
+        android:letterSpacing="0.1"
+        android:clickable="false"
+        android:text="REGISTER"
+        android:textColor="@color/white" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="150dp" />
+</LinearLayout>
