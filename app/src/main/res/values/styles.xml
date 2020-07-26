@@ -5,6 +5,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:ambientShadowAlpha">0.1</item>
+        <item name="android:spotShadowAlpha">0.1</item>
     </style>
 
     <style name="edit_text" parent="AppTheme">
@@ -33,7 +36,7 @@
 
     <style name="message_text_bold" parent="AppTheme">
         <item name="fontPath">fonts/Lato-Bold.ttf</item>
-        <item name="android:textColor">@color/oil</item>
+        <item name="android:textColor">@color/dark_cyan</item>
         <item name="android:textSize">13sp</item>
     </style>
 

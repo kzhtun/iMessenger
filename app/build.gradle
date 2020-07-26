@@ -49,8 +49,6 @@ dependencies {
     // butterknife
     implementation 'com.jakewharton:butterknife:10.2.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
-
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
 
     // firebase
@@ -58,7 +56,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.1.6'
 
     // emoji
-    implementation "com.android.support:support-emoji:28.0.0"
+  //  implementation "com.android.support:support-emoji:28.0.0"
 
     // google lib
     implementation 'com.google.android.material:material:1.1.0'

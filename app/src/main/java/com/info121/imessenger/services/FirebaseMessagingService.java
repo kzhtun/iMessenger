@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+
 
 
 import androidx.core.app.NotificationCompat;
@@ -20,6 +20,8 @@ import com.info121.imessenger.App;
 import com.info121.imessenger.R;
 
 import com.info121.imessenger.activities.SplashActivity;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -80,7 +82,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             }
         }
 
-        mNotificationManager.notify(0, notificationBuilder.build());
+        mNotificationManager.notify(c.incrementAndGet(), notificationBuilder.build());
     }
 
 
@@ -90,6 +92,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
         showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"));
+        EventBus.getDefault().post("REFRESH_MESSAGES");
 
         super.onMessageReceived(remoteMessage);
 

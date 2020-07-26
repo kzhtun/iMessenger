@@ -6,20 +6,16 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.util.Log;
 
-
-import androidx.annotation.Nullable;
-import androidx.core.provider.FontRequest;
-import androidx.emoji.text.EmojiCompat;
-import androidx.emoji.text.FontRequestEmojiCompatConfig;
 
 import com.info121.imessenger.utils.PrefDB;
 import com.info121.imessenger.utils.Util;
 
 import java.util.TimeZone;
 
-
+import io.github.inflationx.calligraphy3.CalligraphyConfig;
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
+import io.github.inflationx.viewpump.ViewPump;
 
 
 public class App extends Application {
@@ -30,7 +26,7 @@ public class App extends Application {
     public static final Handler mHandler = new Handler();
 
     //DEV
-    public static String CONST_REST_API_URL = "http://info121.sytes.net:84/RestAPIInfoMessage/MyLimoService.svc/";
+    public static String CONST_REST_API_URL = "http://info121.sytes.net/RestAPIInfoMessage/MyLimoService.svc/";
 
 
     public static String DEFAULT_STATUS_MESSAGE = "Hi, I'm using iMessenger by Info121";
@@ -77,24 +73,24 @@ public class App extends Application {
         App.DeviceID = Util.getDeviceID(getApplicationContext());
 
 
-        final FontRequest fontRequest = new FontRequest(
-                "com.google.android.gms.fonts",
-                "com.google.android.gms",
-                "Noto Color Emoji Compat",
-                R.array.com_google_android_gms_fonts_certs);
+//        final FontRequest fontRequest = new FontRequest(
+//                "com.google.android.gms.fonts",
+//                "com.google.android.gms",
+//                "Noto Color Emoji Compat",
+//                R.array.com_google_android_gms_fonts_certs);
+//
+//
+//        EmojiCompat.Config config = new FontRequestEmojiCompatConfig(this, fontRequest);
+//        EmojiCompat.init(config);
 
 
-        EmojiCompat.Config config = new FontRequestEmojiCompatConfig(this, fontRequest);
-        EmojiCompat.init(config);
-
-
-//        ViewPump.init(ViewPump.builder()
-//                .addInterceptor(new CalligraphyInterceptor(
-//                        new CalligraphyConfig.Builder()
-//                                .setDefaultFontPath("fonts/Lato-Regular.ttf")
-//                                .setFontAttrId(R.attr.fontPath)
-//                                .build()))
-//                .build());
+        ViewPump.init(ViewPump.builder()
+                .addInterceptor(new CalligraphyInterceptor(
+                        new CalligraphyConfig.Builder()
+                                .setDefaultFontPath("fonts/Lato-Regular.ttf")
+                                .setFontAttrId(R.attr.fontPath)
+                                .build()))
+                .build());
 
 //        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
 //                .setDefaultFontPath("fonts/Lato-Regular.ttf")

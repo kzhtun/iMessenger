@@ -3,13 +3,9 @@ package com.info121.imessenger.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+
 import android.util.Log;
 import android.widget.ProgressBar;
-
-import androidx.emoji.widget.EmojiEditText;
-import androidx.emoji.widget.EmojiTextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.info121.imessenger.App;

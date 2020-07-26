@@ -3,6 +3,7 @@ package com.info121.imessenger.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -20,9 +21,14 @@ import com.info121.imessenger.adapters.MessageListAdapter;
 import com.info121.imessenger.api.RestClient;
 import com.info121.imessenger.models.MessageDetails;
 import com.info121.imessenger.models.ObjectRes;
+import com.info121.imessenger.utils.Util;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -45,6 +51,7 @@ public class MessageListActivity extends BaseActivity {
 
     int newCount;
     int position;
+    int item_start, item_end;
 
     List<MessageDetails> mMessageList = new ArrayList();
     MessageListAdapter messageListAdapter;
@@ -57,6 +64,10 @@ public class MessageListActivity extends BaseActivity {
     @BindView(R.id.profile_image)
     CircularImageView profileImage;
 
+    Boolean firstLoad = true;
+
+    final Handler handler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +76,10 @@ public class MessageListActivity extends BaseActivity {
         ButterKnife.bind(this);
         mContext = MessageListActivity.this;
 
+        Date currentTime = Calendar.getInstance().getTime();
+
         welcome.setText("Welcome " + App.UserName);
+        lastLogin.setText("Last Login : " + Util.convertDateToString(currentTime, "dd/MM/yyyy hh:mm a"));
 
         callGetUserMessages();
 
@@ -74,33 +88,33 @@ public class MessageListActivity extends BaseActivity {
         messageListAdapter = new MessageListAdapter(mContext, mMessageList);
         mRecyclerView.setAdapter(messageListAdapter);
 
-        pullToRefresh.setOnRefreshListener(() -> callGetUserMessages());
+        pullToRefresh.setOnRefreshListener(() -> {
+            firstLoad = true;
+            callGetUserMessages();
+        });
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-                //  position = linearLayoutManager.findLastCompletelyVisibleItemPosition();
-                position = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                item_start = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                item_end = linearLayoutManager.findLastCompletelyVisibleItemPosition();
 
-                if (mMessageList.get(position).getMsgStatus().equalsIgnoreCase("HEADER"))
-                    position++;
+                if(item_start == -1 || item_end == -1) return;
 
-                Log.e("New State : ", position + "");
-                if (mMessageList.get(position).getMsgStatus().equalsIgnoreCase("NEW")) {
-                    //  if (mMessageList.get(position).getMessageID().equals("194"))
-                    callUpdateMessageStatus(mMessageList.get(position).getMessageID());
+                Log.e("Scroll at", position + "");
 
-                    try {
-                        callUpdateMessageStatus(mMessageList.get(position - 1).getMessageID());
-                        callUpdateMessageStatus(mMessageList.get(position + 1).getMessageID());
-                    } catch (Exception e) {
-                        Log.e("New State : ", position + 1 + "");
-                        Log.e("New State : ", position - 1 + "");
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    Log.e("Idle at ", item_start + " to " + item_end);
+
+                    for (int i = item_start; i <= item_end; i++) {
+                        if (mMessageList.get(i).getMsgStatus().equalsIgnoreCase("NEW")) {
+                               callUpdateMessageStatus(mMessageList.get(i).getMessageID());
+                        }
                     }
-
                 }
             }
 
@@ -109,6 +123,7 @@ public class MessageListActivity extends BaseActivity {
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
+
 
     }
 
@@ -128,6 +143,7 @@ public class MessageListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
                 Log.e("Update Status : ", "Success");
+                handler.postDelayed(() -> MessageListActivity.this.runOnUiThread(() -> callGetUserMessages()), 2000);
             }
 
             @Override
@@ -139,6 +155,7 @@ public class MessageListActivity extends BaseActivity {
 
     private void callGetUserMessages() {
         pullToRefresh.setRefreshing(true);
+
         Call<ObjectRes> call = RestClient.CHAT().getApiService().GetUserMessages(
                 App.MobileNo,
                 App.SecretKey,
@@ -148,12 +165,22 @@ public class MessageListActivity extends BaseActivity {
         call.enqueue(new Callback<ObjectRes>() {
             @Override
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
-                if (response.body().getToken().length() > 0) {
-                    mMessageList = groupByDate(response.body().getMessageDetails());
-                    messageListAdapter = new MessageListAdapter(mContext, mMessageList);
-                    mRecyclerView.setAdapter(messageListAdapter);
+
+                if(response.body().getToken() == null) return;
+
+                if ( response.body().getToken().length() > 0) {
+                    mMessageList.clear();
+
+                    mMessageList.addAll(groupByDate(response.body().getMessageDetails()));
+                    messageListAdapter.notifyDataSetChanged();
+
 
                     pullToRefresh.setRefreshing(false);
+
+                    if (firstLoad) {
+                        mRecyclerView.scheduleLayoutAnimation();
+                        firstLoad = false;
+                    }
 
                     Log.e("Get User Messages : ", "Success");
                 }
@@ -172,32 +199,46 @@ public class MessageListActivity extends BaseActivity {
         newCount = 0;
 
         List<MessageDetails> tmpList = new ArrayList<>();
-        String[] dt1 = rawList.get(0).getMsgDate().split(" ");
-        String[] dt2 = rawList.get(0).getMsgDate().split(" ");
 
-        tmpList.add(new MessageDetails(dt1[0], "HEADER"));
-        tmpList.add(rawList.get(0));
+        try {
+            String[] dt1 = rawList.get(0).getMsgDate().split(" ");
+            String[] dt2 = rawList.get(0).getMsgDate().split(" ");
 
-        for (int i = 1; i < rawList.size(); i++) {
-            dt1 = rawList.get(i - 1).getMsgDate().split(" ");
-            dt2 = rawList.get(i).getMsgDate().split(" ");
+            tmpList.add(new MessageDetails(dt1[0], "HEADER"));
+            tmpList.add(rawList.get(0));
 
-            if (!dt1[0].equalsIgnoreCase(dt2[0])) {
-                tmpList.add(new MessageDetails(dt2[0], "HEADER"));
+            for (int i = 1; i < rawList.size(); i++) {
+                dt1 = rawList.get(i - 1).getMsgDate().split(" ");
+                dt2 = rawList.get(i).getMsgDate().split(" ");
+
+                if (!dt1[0].equalsIgnoreCase(dt2[0])) {
+                    tmpList.add(new MessageDetails(dt2[0], "HEADER"));
+                }
+
+                tmpList.add(rawList.get(i));
+
+                if (tmpList.get(i).getMsgStatus().equalsIgnoreCase("NEW")) {
+                    newCount++;
+                }
             }
-
-            tmpList.add(rawList.get(i));
-
-            if (tmpList.get(i).getMsgStatus().equalsIgnoreCase("NEW")) {
-                newCount++;
-            }
+        } catch (Exception e) {
         }
 
+
         if (newCount == 0)
-            newMessage.setText("You have " + newCount + " new messages");
-        else
             newMessage.setText("You have no new message");
+        else
+            newMessage.setText("You have " + newCount + " new messages");
 
         return tmpList;
     }
+
+    @Subscribe
+    public void onEvent(String action) {
+        if (action.equalsIgnoreCase("REFRESH_MESSAGES")) {
+            MessageListActivity.this.runOnUiThread(() -> callGetUserMessages());
+
+        }
+    }
+
 }

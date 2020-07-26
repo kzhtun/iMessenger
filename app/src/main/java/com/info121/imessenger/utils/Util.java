@@ -1,5 +1,6 @@
 package com.info121.imessenger.utils;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -169,11 +170,9 @@ public class Util {
     }
 
 
-
-
     public static String stringToBinary(String string) {
         //byte[] decode = Base64.decodeBase64(string);
-        byte[] decode =   Base64.decode(string, Base64.DEFAULT);
+        byte[] decode = Base64.decode(string, Base64.DEFAULT);
         return new BigInteger(1, decode).toString(2);
     }
 
@@ -614,7 +613,7 @@ public class Util {
     }
 
 
-    public static String getSecretKey(Context context){
+    public static String getSecretKey(Context context) {
         String todayDate;
         Calendar c;
         SimpleDateFormat df, dfKey;
@@ -634,4 +633,17 @@ public class Util {
         return "info121" + dd + mm + yyyy;
     }
 
+
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.heightPixels;
+
+    }
+
+    public static int getScreenWidth(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.widthPixels;
+    }
 }
