@@ -26,6 +26,9 @@ public interface APIService {
     @GET("getUserMessage/{userhp},{secretkey},{mobileKey}")
     Call<ObjectRes> GetUserMessages(@Path("userhp") String username, @Path("secretkey") String secretkey, @Path("mobileKey") String mobileKey);
 
+    @GET("getUserMessagedate/{userhp},{date},{secretkey},{mobileKey}")
+    Call<ObjectRes> GetUserMessagesDate(@Path("userhp") String username, @Path("date") String date, @Path("secretkey") String secretkey, @Path("mobileKey") String mobileKey);
+
     @GET("updateMessageStatusRead/{messageId},{secretkey},{mobileKey}")
     Call<ObjectRes> UpdateMessageStatus(@Path("messageId") String messageId, @Path("secretkey") String secretkey, @Path("mobileKey") String mobileKey);
 

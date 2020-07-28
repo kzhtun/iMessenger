@@ -38,6 +38,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
+    private static final int TYPE_NO_DATA = 2;
 
 
     public void updateMessageList(List<MessageDetails> messageList) {
@@ -58,6 +59,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         mContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
+        if (viewType == TYPE_NO_DATA) {
+            View view = inflater.inflate(R.layout.cell_no_data, parent, false);
+            return new NoDataViewHolder(view);
+        }
+
         if (viewType == TYPE_HEADER) {
             View view = inflater.inflate(R.layout.cell_date, parent, false);
             return new DateViewHolder(view);
@@ -76,10 +82,15 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         MessageViewHolder messageHolder;
         DateViewHolder dateHolder;
+        NoDataViewHolder noDataViewHolder;
+
+        if (holder instanceof NoDataViewHolder) {
+            noDataViewHolder = (NoDataViewHolder) holder;
+            noDataViewHolder.message.setText("No data for this day");
+        }
 
         if (holder instanceof DateViewHolder) {
             dateHolder = (DateViewHolder) holder;
-
             dateHolder.date.setText(mMessageList.get(i).getMsgDate());
         }
 
@@ -92,18 +103,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 //  messageHolder.message.setTextAppearance(mContext, R.style.message_text_bold);
                 setTextColor(messageHolder.message, R.color.dark_cyan);
                 setTextStyle(messageHolder.message, mMessageList.get(i).getMessages(), true);
-              //  messageHolder.message.setTypeface(messageHolder.message.getTypeface(), Typeface.BOLD);
+
+                //  messageHolder.message.setTypeface(messageHolder.message.getTypeface(), Typeface.BOLD);
             } else {
 
                 // setBackgroundDrawable(messageHolder.mainLayout, R.drawable.rounded_layout);
                 //   messageHolder.message.setTextAppearance(mContext, R.style.message_text);
                 setTextColor(messageHolder.message, R.color.monsoon);
                 setTextStyle(messageHolder.message, mMessageList.get(i).getMessages(), false);
-              //  messageHolder.message.setTypeface(messageHolder.message.getTypeface(), Typeface.NORMAL);
+                //  messageHolder.message.setTypeface(messageHolder.message.getTypeface(), Typeface.NORMAL);
             }
 
 
-           // messageHolder.message.setText(mMessageList.get(i).getMessages());
+            // messageHolder.message.setText(mMessageList.get(i).getMessages());
             messageHolder.sender.setText(mMessageList.get(i).getSender());
             //   messageHolder.sender.setText(i + "");
             Date date = Util.convertDateStringToDate(mMessageList.get(i).getMsgDate(), "dd/MM/yyyy hh:mm:ss a");
@@ -163,9 +175,20 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public int getItemViewType(int i) {
         if (mMessageList.get(i).getMsgStatus().equalsIgnoreCase("HEADER"))
             return TYPE_HEADER;
-        else
-            return TYPE_ITEM;
+        else {
+            if (mMessageList.get(i).getMessageID().equals("0"))
+                return TYPE_NO_DATA;
+            else
+                return TYPE_ITEM;
+        }
+//
+//            if (mMessageList.get(i).getMessageID().equals("0"))
+//                return TYPE_NO_DATA;
+//            else
+
+
     }
+
 
     private void setAnimation(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
@@ -183,6 +206,16 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
+        }
+    }
+
+    public class NoDataViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.message)
+        TextView message;
+
+        public NoDataViewHolder(@NonNull View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 

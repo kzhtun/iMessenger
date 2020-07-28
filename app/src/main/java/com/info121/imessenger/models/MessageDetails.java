@@ -27,9 +27,11 @@ public class MessageDetails {
     private String senderID;
 
 
-    public MessageDetails(String msgDate, String msgStatus) {
+
+    public MessageDetails(String msgDate, String msgStatus, String messages) {
         this.msgDate = msgDate;
         this.msgStatus = msgStatus;
+        this.messages = messages;
     }
 
     public String getGroupID() {

@@ -28,6 +28,9 @@
     <color name="edit_text_background">#efefef</color>
     <color name="edit_text_color">#333333</color>
 
+    <color name="layout_gray">#DEDEDE</color>
+    <color name="layout_gray_stroke">#CDCDCD</color>
+
     <color name="layout">#FFFFFF</color>
     <color name="layout_stroke">#DEDEDE</color>
 
